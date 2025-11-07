@@ -7,11 +7,11 @@ let messageElement;
 
 let boardState = [];
 let computerPawn;
-let gameStarted = false;
+let isGameStarted = false;
+let isComputerTurn = false;
 
 
 function initBoard() {
-    
     for (let row = 0; row < BOARD_SIZE; row++) {
         boardState[row] = [];
         
@@ -21,7 +21,7 @@ function initBoard() {
         for (let col = 0; col < BOARD_SIZE; col++) {
             boardState[row][col] = "";
             
-            let cell = document.createElement('div');
+            let cell = document.createElement('span');
             cell.className = "cell";
             cell.dataset.row = row;
             cell.dataset.col = col;
@@ -41,10 +41,8 @@ function resetBoard() {
         }
     }
 
-    for (let row of boardContainer.children) {
-        for (let cell of row.children) {
-            cell.innerText = "";
-        }
+    for (let cell of boardContainer.getElementsByTagName('span')) {
+        cell.innerText = "";
     }
 }
 
@@ -55,25 +53,81 @@ function startGame() {
     // Reset board
     resetBoard();
 
-    gameStarted = true;
+    computerPawn = playerPawn.value === 'o' ? 'x' : 'o';
+    isGameStarted = true;
     showMessage("Cliquez sur une cellule pour placer votre pion.");
 }
 
-function playTurn() {
+function finishGame(winner) {
 
 }
 
-function handlePlayerTurn(cell) {
-    if (!gameStarted) return;
 
+// Analyze the board for a tie or a winner.
+// Returns true if the game is finished, false otherwise.
+function analyzeBoard() {
+    // Check if the board is full (tie)
+    availableCells = boardContainer.getElementsByTagName('span').filter(cell => cell.innerText === '');
+    if (availableCells.length === 0) {
+        finishGame(null);
+        return true;
+    }
+
+    // Check for a winner
+    for (let row = 0; row < BOARD_SIZE; row++) {
+        for (let col = 0; col < BOARD_SIZE; col++) {
+
+        }
+    }
+}
+
+function placePawn(cell, pawn) {
     let row = cell.dataset.row;
     let col = cell.dataset.col;
 
     if (boardState[row][col] !== "") return;
 
-    boardState[row][col] = playerPawn.value;
-    cell.innerText = playerPawn.value;
+    boardState[row][col] = pawn;
+    cell.innerText = pawn;
 
+    analyzeBoard();
+}
+
+function getAvailableCells() {
+    let availablesCells = [];
+
+    for (let cell of boardContainer.getElementsByTagName('span')) {
+        if (cell.innerText === "") {
+            availablesCells.push(cell);
+        }
+    }
+
+    return availablesCells;    
+}
+
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#try_it
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
+}
+
+function playComputerTurn() {
+    let cells = getAvailableCells();
+    let randomCell = cells[getRandomInt(cells.length)];
+
+    placePawn(randomCell, computerPawn);
+
+    isComputerTurn = false;
+    showMessage("C'est à vous de jouer.");
+}
+
+function handlePlayerTurn(cell) {
+    if (!isGameStarted || isComputerTurn) return;
+
+    placePawn(cell, playerPawn.value);
+
+    isComputerTurn = true;
+    showMessage("C'est à l'ordinateur de jouer.");
+    setTimeout(playComputerTurn, 1000);
 }
 
 function showMessage(message) {
