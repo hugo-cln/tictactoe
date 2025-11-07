@@ -6,6 +6,7 @@ let playButton;
 let messageElement;
 
 let boardState = [];
+let computerPawn;
 
 function startGame() {
     
@@ -14,6 +15,10 @@ function startGame() {
 function initBoard() {
     for (let row = 0; row < BOARD_SIZE; row++) {
         boardState[row] = [];
+
+        let rowDiv = document.createElement('div');
+        rowDiv.className = "row";
+
         for (let col = 0; col < BOARD_SIZE; col++) {
             boardState[row][col] = "";
 
@@ -21,15 +26,20 @@ function initBoard() {
             cell.className = "cell";
             cell.dataset.row = row;
             cell.dataset.col = col;
+            cell.onclick = () => handlePlayerTurn(cell);
 
-            boardContainer.appendChild(cell);
+            rowDiv.appendChild(cell);
         }
-    }
 
+        boardContainer.appendChild(rowDiv);
+    }
 }
 
 function playTurn() {
 
+}
+
+function handlePlayerTurn(cell) {
 }
 
 function showMessage() {
