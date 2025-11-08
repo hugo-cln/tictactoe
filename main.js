@@ -182,11 +182,25 @@ function handlePlayerTurn(cell) {
 
 // Utilitaries functions
 function getAvailableCells() {
-    return Array.from(boardContainer.getElementsByTagName('span')).filter(cell => cell.innerText === ''); 
+    let availableCells = [];
+    for (let row = 0; row < BOARD_SIZE; row++) {
+        for (let col = 0; col < BOARD_SIZE; col++) {
+
+            let cell = boardState[row][col];
+            if (cell.value === '') availableCells.push(cell.element);
+        }
+    }
+    
+    return availableCells;
 }
 
 function getColumnCells(col) {
-    return Array.from(boardContainer.getElementsByTagName('span')).filter(cell => Number(cell.dataset.col) === col); 
+    let cells = [];
+    for (let row = 0; row < BOARD_SIZE; row++) {
+        cells.push(boardState[row][col]);
+    }
+    
+    return cells;
 }
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#try_it
