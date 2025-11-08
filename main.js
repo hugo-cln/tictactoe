@@ -70,7 +70,7 @@ function finishGame(winner) {
 
 // Analyze the board for a tie or a winner.
 // Returns true if the game is finished, false otherwise.
-function analyzeBoard() {
+function isGameFinished() {
     let availableCellsCount = getAvailableCells().length;
 
     // Game cannot be won before the first player placed BOARD_SIZE pawns.
@@ -103,7 +103,6 @@ function analyzeBoard() {
         colFirstPawn = boardState[0][col].value;
 
         if (colFirstPawn === '') continue;
-
 
         if(getColumnCells(col).filter(cell => cell.innerText === colFirstPawn).length === BOARD_SIZE) {
             finishGame(getPlayerNameFromPawn(colFirstPawn));
@@ -150,38 +149,42 @@ function analyzeBoard() {
 }
 
 // Pawn handling
+// Return true if the pawn has been placed, false otherwise.
 function placePawn(cell, pawn) {
     let row = cell.dataset.row;
     let col = cell.dataset.col;
 
-    if (boardState[row][col].value !== "") return;
+    if (boardState[row][col].value !== "") return false;
 
     boardState[row][col].value = pawn;
     cell.innerText = pawn;
 
-    return analyzeBoard();
+    return true;
 }
 
 function playComputerTurn() {
     let cells = getAvailableCells();
     let randomCell = cells[getRandomInt(cells.length)];
 
-    if (!placePawn(randomCell, computerPawn)) {
-        isComputerTurn = false;
-        showMessage("C'est à vous de jouer.");
+    if (placePawn(randomCell, computerPawn)) {
+        if (!isGameFinished()) {
+            isComputerTurn = false;
+            showMessage("C'est à vous de jouer.");
+        }
     }
 }
 
 function handlePlayerTurn(cell) {
     if (!isGameStarted || isComputerTurn) return;
 
-    if (!placePawn(cell, playerPawn.value)) {
-        isComputerTurn = true;
-        showMessage("C'est à l'ordinateur de jouer.");
-        // Arbitrary waiting time
-        setTimeout(playComputerTurn, 500);
+    if (placePawn(cell, playerPawn.value)) {
+        if (!isGameFinished()) {
+            isComputerTurn = true;
+            showMessage("C'est à l'ordinateur de jouer.");
+            // Arbitrary waiting time
+            setTimeout(playComputerTurn, 500);
+        }
     }
-
 }
 
 // Utilitaries functions
