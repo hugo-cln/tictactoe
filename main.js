@@ -79,12 +79,6 @@ function isGameFinished() {
         return false;
     }
 
-    // Check if the board is full (tie)
-    if (availableCellsCount === 0) {
-        finishGame(null);
-        return true;
-    }
-
     // Check for a winner
     let rowFirstPawn;
     for (let row = 0; row < BOARD_SIZE; row++) {
@@ -114,38 +108,41 @@ function isGameFinished() {
     let pawn = boardState[0][0].value;
     let pawnCount = 0;
 
-    if (pawn !== '') {
-        for (let i = 0; i < BOARD_SIZE; i++) {
-            let cell = boardState[i][i];
-    
-            if (cell.value === pawn) {
-                pawnCount++;
-            }
-        }
-    
-        if (pawnCount === BOARD_SIZE) {
-            finishGame(getPlayerNameFromPawn(pawn));
-            return true;
-        }
+    if (pawn !== '' && checkDiagonal(pawn, true)) {
+        finishGame(getPlayerNameFromPawn(pawn));
+        return true;
     } else {
         pawn = boardState[BOARD_SIZE - 1][0].value;
 
-        if (pawn !== '') {
-            for (let i = BOARD_SIZE - 1; i >= 0; i--) {
-                let cell = boardState[i][BOARD_SIZE - i - 1];
-        
-                if (cell.value === pawn) {
-                    pawnCount++;
-                }
-            }
-        
-            if (pawnCount === BOARD_SIZE) {
-                finishGame(getPlayerNameFromPawn(pawn));
-                return true;
-            }
+        if (pawn !== '' && checkDiagonal(pawn, false)) {
+            finishGame(getPlayerNameFromPawn(pawn));
+            return true;
         }
     }
+
+    // Check if the board is full (tie)
+    if (availableCellsCount === 0) {
+        finishGame(null);
+        return true;
+    }
+
     return false;
+}
+
+function checkDiagonal(pawn, isMainDiagonal) {
+    let pawnCount = 0;
+
+    for (let i = 0; i < BOARD_SIZE; i++) {
+        let cell = isMainDiagonal
+            ? boardState[i][i]
+            : boardState[i][BOARD_SIZE - i - 1];
+        
+        if (cell.value === pawn) {
+            pawnCount++;
+        }
+    }
+
+    return pawnCount === BOARD_SIZE;
 }
 
 // Pawn handling
