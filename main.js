@@ -66,6 +66,7 @@ function finishGame(winner) {
     }
 
     isGameStarted = false;
+    isComputerTurn = false;
 
 }
 
@@ -90,6 +91,8 @@ function analyzeBoard() {
     let rowFirstPawn;
     for (let row = 0; row < BOARD_SIZE; row++) {
         rowFirstPawn = boardState[row][0].value;
+
+        if (rowFirstPawn === '') continue;
         
         if (boardState[row].filter(cell => cell.value === rowFirstPawn).length === BOARD_SIZE) {
             finishGame(getPlayerNameFromPawn(rowFirstPawn));
@@ -101,6 +104,9 @@ function analyzeBoard() {
     for (let col = 0; col < BOARD_SIZE; col++) {
         colFirstPawn = boardState[0][col].value;
 
+        if (colFirstPawn === '') continue;
+
+
         if(getColumnCells(col).filter(cell => cell.innerText === colFirstPawn).length === BOARD_SIZE) {
             finishGame(getPlayerNameFromPawn(colFirstPawn));
             return true;
@@ -111,34 +117,38 @@ function analyzeBoard() {
     let pawn = boardState[0][0].value;
     let pawnCount = 0;
 
-    for (let i = 0; i < BOARD_SIZE; i++) {
-        let cell = boardState[i][i];
+    if (pawn !== '') {
+        for (let i = 0; i < BOARD_SIZE; i++) {
+            let cell = boardState[i][i];
+    
+            if (cell.value === pawn) {
+                pawnCount++;
+            }
+        }
+    
+        if (pawnCount === BOARD_SIZE) {
+            finishGame(getPlayerNameFromPawn(pawn));
+            return true;
+        }
+    } else {
+        pawn = boardState[BOARD_SIZE - 1][0].value;
 
-        if (cell.value === pawn) {
-            pawnCount++;
+        if (pawn !== '') {
+            for (let i = BOARD_SIZE - 1; i >= 0; i--) {
+                let cell = boardState[i][BOARD_SIZE - i - 1];
+        
+                if (cell.value === pawn) {
+                    pawnCount++;
+                }
+            }
+        
+            if (pawnCount === BOARD_SIZE) {
+                finishGame(getPlayerNameFromPawn(pawn));
+                return true;
+            }
         }
     }
 
-    if (pawnCount === BOARD_SIZE) {
-        finishGame(getPlayerNameFromPawn(pawn));
-        return true;
-    }
-
-    pawn = boardState[BOARD_SIZE - 1][0].value;
-    pawnCount = 0;
-
-    for (let i = BOARD_SIZE - 1; i >= 0; i--) {
-        let cell = boardState[i][BOARD_SIZE - i - 1];
-
-        if (cell.value === pawn) {
-            pawnCount++;
-        }
-    }
-
-    if (pawnCount === BOARD_SIZE) {
-        finishGame(getPlayerNameFromPawn(pawn));
-        return true;
-    }
 
     return false;
 }
