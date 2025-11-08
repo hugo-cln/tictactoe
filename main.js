@@ -76,7 +76,7 @@ function analyzeBoard() {
     let availableCellsCount = getAvailableCells().length;
     // Game cannot be won before the first player placed BOARD_SIZE pawns.
     let maxCells = Math.pow(BOARD_SIZE, 2);
-    if (maxCells - availableCellsCount < BOARD_SIZE * 2) {
+    if (maxCells - availableCellsCount < (BOARD_SIZE * 2) - 1) {
         return false;
     }
 
@@ -87,12 +87,60 @@ function analyzeBoard() {
     }
 
     // Check for a winner
+    let rowFirstPawn;
     for (let row = 0; row < BOARD_SIZE; row++) {
-        // Checks for rows win
-        for (let col = 0; col < BOARD_SIZE; col++) {
-
+        rowFirstPawn = boardState[row][0].value;
+        
+        if (boardState[row].filter(cell => cell.value === rowFirstPawn).length === BOARD_SIZE) {
+            finishGame(getPlayerNameFromPawn(rowFirstPawn));
+            return true;
         }
     }
+
+    let colFirstPawn;
+    for (let col = 0; col < BOARD_SIZE; col++) {
+        colFirstPawn = boardState[0][col].value;
+
+        if(getColumnCells(col).filter(cell => cell.innerText === colFirstPawn).length === BOARD_SIZE) {
+            finishGame(getPlayerNameFromPawn(colFirstPawn));
+            return true;
+        }
+    }
+
+    // Diagonals wins
+    let pawn = boardState[0][0].value;
+    let pawnCount = 0;
+
+    for (let i = 0; i < BOARD_SIZE; i++) {
+        let cell = boardState[i][i];
+
+        if (cell.value === pawn) {
+            pawnCount++;
+        }
+    }
+
+    if (pawnCount === BOARD_SIZE) {
+        finishGame(getPlayerNameFromPawn(pawn));
+        return true;
+    }
+
+    pawn = boardState[BOARD_SIZE - 1][0].value;
+    pawnCount = 0;
+
+    for (let i = BOARD_SIZE - 1; i >= 0; i--) {
+        let cell = boardState[i][BOARD_SIZE - i - 1];
+
+        if (cell.value === pawn) {
+            pawnCount++;
+        }
+    }
+
+    if (pawnCount === BOARD_SIZE) {
+        finishGame(getPlayerNameFromPawn(pawn));
+        return true;
+    }
+
+    return false;
 }
 
 function placePawn(cell, pawn) {
@@ -111,9 +159,21 @@ function getAvailableCells() {
     return Array.from(boardContainer.getElementsByTagName('span')).filter(cell => cell.innerText === ''); 
 }
 
+function getColumnCells(col) {
+    return Array.from(boardContainer.getElementsByTagName('span')).filter(cell => Number(cell.dataset.col) === col); 
+}
+
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#try_it
 function getRandomInt(max) {
   return Math.floor(Math.random() * max);
+}
+
+function getPlayerNameFromPawn(pawn) {
+    if (pawn === computerPawn) {
+        return "l'ordinateur";
+    } else {
+        return "le joueur";
+    }
 }
 
 function playComputerTurn() {
@@ -132,7 +192,7 @@ function handlePlayerTurn(cell) {
     if (!placePawn(cell, playerPawn.value)) {
         isComputerTurn = true;
         showMessage("C'est à l'ordinateur de jouer.");
-        setTimeout(playComputerTurn, 1000);
+        setTimeout(playComputerTurn, 100);
     }
 
 }
