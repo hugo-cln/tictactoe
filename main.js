@@ -19,7 +19,6 @@ function initBoard() {
         rowDiv.className = "row";
         
         for (let col = 0; col < BOARD_SIZE; col++) {
-            boardState[row][col] = "";
             
             let cell = document.createElement('span');
             cell.className = "cell";
@@ -28,6 +27,8 @@ function initBoard() {
             cell.onclick = () => handlePlayerTurn(cell);
             
             rowDiv.appendChild(cell);
+
+            boardState[row][col] = {value: "", element: cell};
         }
         
         boardContainer.appendChild(rowDiv);
@@ -37,12 +38,10 @@ function initBoard() {
 function resetBoard() {
     for (let row = 0; row < BOARD_SIZE; row++) {
         for (let col = 0; col < BOARD_SIZE; col++) {
-            boardState[row][col] = "";
+            let cell = boardState[row][col]; 
+            cell.value = "";
+            cell.element.innerText = "";
         }
-    }
-
-    for (let cell of boardContainer.getElementsByTagName('span')) {
-        cell.innerText = "";
     }
 }
 
@@ -89,6 +88,7 @@ function analyzeBoard() {
 
     // Check for a winner
     for (let row = 0; row < BOARD_SIZE; row++) {
+        // Checks for rows win
         for (let col = 0; col < BOARD_SIZE; col++) {
 
         }
@@ -99,9 +99,9 @@ function placePawn(cell, pawn) {
     let row = cell.dataset.row;
     let col = cell.dataset.col;
 
-    if (boardState[row][col] !== "") return;
+    if (boardState[row][col].value !== "") return;
 
-    boardState[row][col] = pawn;
+    boardState[row][col].value = pawn;
     cell.innerText = pawn;
 
     return analyzeBoard();
