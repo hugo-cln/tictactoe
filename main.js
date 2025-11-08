@@ -75,7 +75,7 @@ function finishGame(winner) {
 // Returns true if the game is finished, false otherwise.
 function analyzeBoard() {
     // Check if the board is full (tie)
-    availableCells = boardContainer.getElementsByTagName('span').filter(cell => cell.innerText === '');
+    availableCells = Array.from(boardContainer.getElementsByTagName('span')).filter(cell => cell.innerText === '');
     if (availableCells.length === 0) {
         finishGame(null);
         return true;
@@ -98,7 +98,7 @@ function placePawn(cell, pawn) {
     boardState[row][col] = pawn;
     cell.innerText = pawn;
 
-    analyzeBoard();
+    return analyzeBoard();
 }
 
 function getAvailableCells() {
@@ -122,20 +122,21 @@ function playComputerTurn() {
     let cells = getAvailableCells();
     let randomCell = cells[getRandomInt(cells.length)];
 
-    placePawn(randomCell, computerPawn);
-
-    isComputerTurn = false;
-    showMessage("C'est à vous de jouer.");
+    if (!placePawn(randomCell, computerPawn)) {
+        isComputerTurn = false;
+        showMessage("C'est à vous de jouer.");
+    }
 }
 
 function handlePlayerTurn(cell) {
     if (!isGameStarted || isComputerTurn) return;
 
-    placePawn(cell, playerPawn.value);
+    if (!placePawn(cell, playerPawn.value)) {
+        isComputerTurn = true;
+        showMessage("C'est à l'ordinateur de jouer.");
+        setTimeout(playComputerTurn, 1000);
+    }
 
-    isComputerTurn = true;
-    showMessage("C'est à l'ordinateur de jouer.");
-    setTimeout(playComputerTurn, 1000);
 }
 
 function showMessage(message) {
