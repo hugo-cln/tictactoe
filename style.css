@@ -1,5 +1,17 @@
+body {
+    padding: 0;
+    margin: 4em 0;
+    text-align: center;
+}
+
+#board {
+    margin: 0 auto;
+    width: min-content;
+}
+
 .row {
     display: flex;
+    width: min-content;
 }
 
 .cell {
@@ -8,4 +20,25 @@
     border: 1px solid black;
     line-height: 4em;
     text-align: center;
+    cursor: default;
+}
+
+.cell:empty {
+    cursor: pointer;
+}
+
+#message {
+    border: 2px solid #003049;
+    background-color: #669bbc;
+    color: white;
+    border-radius: 1em;
+    width: 80%;
+    margin: 1em auto;
+    padding: 0.5em 0;
+}
+
+#play-button {
+    margin-top: 2em;
+    padding: 0.75em 1.5em;
+    cursor: pointer;
 }
