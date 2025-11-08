@@ -57,12 +57,9 @@ function startGame() {
 }
 
 function finishGame(winner) {
-    if (winner === null) {
-        showMessage("Personne n'a gagné...");
-
-    } else {
-        showMessage(`${winner} à gagné !`);
-    }
+    let message = winner ? `${winner} à gagné !` : "Personne n'a gagné...";
+    
+    showMessage(message);
 
     isGameStarted = false;
     isComputerTurn = false;
@@ -106,7 +103,6 @@ function isGameFinished() {
 
     // Diagonals wins
     let pawn = boardState[0][0].value;
-    let pawnCount = 0;
 
     if (pawn !== '' && checkDiagonal(pawn, true)) {
         finishGame(getPlayerNameFromPawn(pawn));
