@@ -10,7 +10,7 @@ let computerPawn;
 let isGameStarted = false;
 let isComputerTurn = false;
 
-
+// Board generation
 function initBoard() {
     for (let row = 0; row < BOARD_SIZE; row++) {
         boardState[row] = [];
@@ -19,32 +19,31 @@ function initBoard() {
         rowDiv.className = "row";
         
         for (let col = 0; col < BOARD_SIZE; col++) {
-            
             let cell = document.createElement('span');
+
             cell.className = "cell";
             cell.dataset.row = row;
             cell.dataset.col = col;
             cell.onclick = () => handlePlayerTurn(cell);
             
             rowDiv.appendChild(cell);
-
             boardState[row][col] = {value: "", element: cell};
         }
         
         boardContainer.appendChild(rowDiv);
     }
 }
-// A optimiser
+
 function resetBoard() {
     for (let row = 0; row < BOARD_SIZE; row++) {
-        for (let col = 0; col < BOARD_SIZE; col++) {
-            let cell = boardState[row][col]; 
+        for (const cell of boardState[row]) {
             cell.value = "";
             cell.element.innerText = "";
         }
     }
 }
 
+// Game state handling
 function startGame() {
     playerPawn.disabled = true;
     playButton.innerText = "Relancer la partie";
@@ -60,21 +59,20 @@ function startGame() {
 function finishGame(winner) {
     if (winner === null) {
         showMessage("Personne n'a gagné...");
-    
+
     } else {
         showMessage(`${winner} à gagné !`);
     }
 
     isGameStarted = false;
     isComputerTurn = false;
-
 }
-
 
 // Analyze the board for a tie or a winner.
 // Returns true if the game is finished, false otherwise.
 function analyzeBoard() {
     let availableCellsCount = getAvailableCells().length;
+
     // Game cannot be won before the first player placed BOARD_SIZE pawns.
     let maxCells = Math.pow(BOARD_SIZE, 2);
     if (maxCells - availableCellsCount < (BOARD_SIZE * 2) - 1) {
@@ -148,11 +146,10 @@ function analyzeBoard() {
             }
         }
     }
-
-
     return false;
 }
 
+// Pawn handling
 function placePawn(cell, pawn) {
     let row = cell.dataset.row;
     let col = cell.dataset.col;
@@ -163,27 +160,6 @@ function placePawn(cell, pawn) {
     cell.innerText = pawn;
 
     return analyzeBoard();
-}
-
-function getAvailableCells() {
-    return Array.from(boardContainer.getElementsByTagName('span')).filter(cell => cell.innerText === ''); 
-}
-
-function getColumnCells(col) {
-    return Array.from(boardContainer.getElementsByTagName('span')).filter(cell => Number(cell.dataset.col) === col); 
-}
-
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#try_it
-function getRandomInt(max) {
-  return Math.floor(Math.random() * max);
-}
-
-function getPlayerNameFromPawn(pawn) {
-    if (pawn === computerPawn) {
-        return "l'ordinateur";
-    } else {
-        return "le joueur";
-    }
 }
 
 function playComputerTurn() {
@@ -202,16 +178,39 @@ function handlePlayerTurn(cell) {
     if (!placePawn(cell, playerPawn.value)) {
         isComputerTurn = true;
         showMessage("C'est à l'ordinateur de jouer.");
-        setTimeout(playComputerTurn, 100);
+        // Arbitrary waiting time
+        setTimeout(playComputerTurn, 500);
     }
 
 }
 
-function showMessage(message) {
-    messageElement.innerText = message;
-
+// Utilitaries functions
+function getAvailableCells() {
+    return Array.from(boardContainer.getElementsByTagName('span')).filter(cell => cell.innerText === ''); 
 }
 
+function getColumnCells(col) {
+    return Array.from(boardContainer.getElementsByTagName('span')).filter(cell => Number(cell.dataset.col) === col); 
+}
+
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random#try_it
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
+}
+
+function getPlayerNameFromPawn(pawn) {
+    if (pawn === computerPawn) {
+        return "L'ordinateur";
+    } else {
+        return "Le joueur";
+    }
+}
+
+function showMessage(message) {
+    messageElement.innerText = message;
+}
+
+// Startup
 window.onload = () => {
     playerPawn = document.getElementById('player-pawn');
     boardContainer = document.getElementById('board');
