@@ -59,6 +59,14 @@ function startGame() {
 }
 
 function finishGame(winner) {
+    if (winner === null) {
+        showMessage("Personne n'a gagné...");
+    
+    } else {
+        showMessage(`${winner} à gagné !`);
+    }
+
+    isGameStarted = false;
 
 }
 
