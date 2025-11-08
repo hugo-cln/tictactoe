@@ -10,7 +10,7 @@ let computerPawn;
 let isGameStarted = false;
 let isComputerTurn = false;
 
-// Board generation
+//#region Board generation
 function initBoard() {
     for (let row = 0; row < BOARD_SIZE; row++) {
         boardState[row] = [];
@@ -42,8 +42,9 @@ function resetBoard() {
         }
     }
 }
+//#endregion
 
-// Game state handling
+//#region Game state handling
 function startGame() {
     playerPawn.disabled = true;
     playButton.innerText = "Relancer la partie";
@@ -140,8 +141,9 @@ function checkDiagonal(pawn, isMainDiagonal) {
 
     return pawnCount === BOARD_SIZE;
 }
+//#endregion
 
-// Pawn handling
+//#region Pawn handling
 // Return true if the pawn has been placed, false otherwise.
 function placePawn(cell, pawn) {
     let row = cell.dataset.row;
@@ -179,8 +181,9 @@ function handlePlayerTurn(cell) {
         }
     }
 }
+//#endregion
 
-// Utilitaries functions
+//#region Utilitaries functions
 function getAvailableCells() {
     let availableCells = [];
     for (let row = 0; row < BOARD_SIZE; row++) {
@@ -219,6 +222,7 @@ function getPlayerNameFromPawn(pawn) {
 function showMessage(message) {
     messageElement.innerText = message;
 }
+//#endregion
 
 // Startup
 window.onload = () => {
