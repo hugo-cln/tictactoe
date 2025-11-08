@@ -97,7 +97,7 @@ function isGameFinished() {
 
         if (colFirstPawn === '') continue;
 
-        if(getColumnCells(col).filter(cell => cell.innerText === colFirstPawn).length === BOARD_SIZE) {
+        if(getColumnCells(col).filter(cell => cell.value === colFirstPawn).length === BOARD_SIZE) {
             finishGame(getPlayerNameFromPawn(colFirstPawn));
             return true;
         }
