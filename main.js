@@ -64,6 +64,7 @@ function finishGame(winner) {
 
     isGameStarted = false;
     isComputerTurn = false;
+    playerPawn.disabled = false;
 }
 
 // Analyze the board for a tie or a winner.
