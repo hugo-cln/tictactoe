@@ -74,8 +74,14 @@ function finishGame(winner) {
 // Analyze the board for a tie or a winner.
 // Returns true if the game is finished, false otherwise.
 function analyzeBoard() {
+    // Game cannot be won before the first player placed BOARD_SIZE pawns.
+    let maxCells = Math.pow(BOARD_SIZE, 2);
+    if (maxCells - availableCells < BOARD_SIZE * 2) {
+        return false;
+    }
+
     // Check if the board is full (tie)
-    availableCells = Array.from(boardContainer.getElementsByTagName('span')).filter(cell => cell.innerText === '');
+    let availableCells = Array.from(boardContainer.getElementsByTagName('span')).filter(cell => cell.innerText === '');
     if (availableCells.length === 0) {
         finishGame(null);
         return true;
